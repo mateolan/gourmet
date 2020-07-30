@@ -1,12 +1,12 @@
-BeautifulSoup4
-ebooklib
+EbookLib
+giofile
+gobject
 keyring
-lxml
-Pillow
-# pycairo
-pyenchant
-# pygobject
-# pygtkspelaplcheck
+pgi
+pyglet
+pygtkspellcheck
 reportlab
+scrape-schema-recipe
 selenium
-sqlalchemy
+Sphinx
+SQLAlchemy
