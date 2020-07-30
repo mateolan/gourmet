@@ -1,4 +1,4 @@
-name: Create Flatpak Artifact
+name: Create Flatpak
 
 on:
   push:
@@ -23,10 +23,6 @@ jobs:
         flatpak install flathub org.gnome.Platform//3.36 org.gnome.Sdk//3.36 -y
 
     - name: Build Flatpak
-      run: |
-        flatpak-builder build-dir .flatpak/io.github.thinkle.Gourmet.yml
-
-    - name: Build Repo
       run: |
         flatpak-builder --repo=repo --force-clean build-dir .flatpak/io.github.thinkle.Gourmet.yml
 
