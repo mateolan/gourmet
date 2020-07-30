@@ -3,7 +3,6 @@ runtime: org.gnome.Platform
 runtime-version: '3.36'
 sdk: org.gnome.Sdk
 command: gourmet
-rename-desktop-file: gourmet.desktop
 
 finish-args:
   - --filesystem=host
@@ -37,7 +36,7 @@ modules:
       build-args:
         - --share=network
     build-commands:
-      - pip3 install pygtkspellcheck reportlab lxml keyring dogtail scrape-schema-recipe ebooklib sqlalchemy Pillow gobject beautifulsoup4 pycairo pyglet giofile
+      - pip3 install pygtkspellcheck reportlab lxml keyring scrape-schema-recipe ebooklib sqlalchemy Pillow gobject beautifulsoup4 pycairo pyglet giofile
 
   - name: gourmet
     buildsystem: simple
