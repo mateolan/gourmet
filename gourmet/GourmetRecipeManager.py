@@ -1,13 +1,5 @@
 #!/usr/bin/env python
 import os.path, os, re, threading
-try:
-    from gi import gicompat
-except ImportError:
-    pygtkcompat = None
-
-if pygtkcompat is not None:
-    pygtkcompat.enable()
-    pygtkcompat.enable_gtk(version='3.0')
 
 from gi.repository import Gdk, GdkPixbuf, GObject, Gtk
 from . import batchEditor
@@ -243,18 +235,19 @@ class GourmetApplication:
                                {} # a dictionary of added menu items
                                ]
 
-    def update_action_group (self):
-        for rc in list(self.rc.values()):
-            action_name = 'GoRecipe'+str(rc.current_rec.id)
+    def update_action_group(self):
+        """Attach actions for this recipe, using its title."""
+        for rc in self.rc.values():
+            action_name = f'GoRecipe{rc.current_rec.id}'
+            title = rc.current_rec.title or 'Untitled'
+            title = f'_{title}'
+
             existing_action = self.goActionGroup.get_action(action_name)
             if not existing_action:
-                self.goActionGroup.add_actions(
-                    [(action_name,None,'_'+rc.current_rec.title,
-                      None,None,rc.show)]
-                    )
+                self.goActionGroup.add_actions([(action_name, None, title,
+                                                 None, None, rc.show)])
             else:
-                if existing_action.get_property('label') != '_'+rc.current_rec.title:
-                    existing_action.set_property('label','_'+rc.current_rec.title)
+                existing_action.set_property('label', title)
 
     def update_go_menu (self):
         self.update_action_group()
@@ -940,8 +933,6 @@ class RecGui (RecIndex, GourmetApplication, ImporterExporter, StuffThatShouldBeP
                           rg=self,
                           editable=False)
         self.setup_database_hooks()
-        fix_action_group_importance(self.search_actions)
-        self.ui_manager.insert_action_group(self.search_actions,0)
         self.setup_main_window()
         self.window.add_accel_group(self.ui_manager.get_accel_group())
         self.setup_column_display_preferences()
