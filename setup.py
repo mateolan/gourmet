@@ -10,7 +10,7 @@ import distutils.command.build_py
 import distutils.command.build_scripts
 import distutils.core
 from distutils.util import convert_path
-import setuptools  # noqa: enable wheels distribution
+import setuptools
 
 
 from gourmet import version
@@ -201,37 +201,7 @@ WARNING: Intltool will use the values specified from the
                 data_files.append((target, files_merged))
 
 
-class build_icons(distutils.cmd.Command):
-
-    description = "select all icons for installation"
-
-    user_options = [('icon-dir=', 'i', 'icon directory of the source tree')]
-
-    def initialize_options(self):
-        self.icon_dir = None
-
-    def finalize_options(self):
-        if self.icon_dir is None:
-            self.icon_dir = os.path.join("data", "icons")
-
-    def run(self):
-        data_files = self.distribution.data_files
-
-        for size in glob.glob(os.path.join(self.icon_dir, "*")):
-            for category in glob.glob(os.path.join(size, "*")):
-                icons = []
-                for icon in glob.glob(os.path.join(category, "*")):
-                    if not os.path.islink(icon):
-                        icons.append(icon)
-                if icons:
-                    data_files.append(("share/icons/hicolor/%s/%s" %
-                                       (os.path.basename(size),
-                                        os.path.basename(category)),
-                                       icons))
-
-
 distutils.command.build.build.sub_commands.append(("build_i18n", None))
-distutils.command.build.build.sub_commands.append(("build_icons", None))
 
 
 class build_py(distutils.command.build_py.build_py):
@@ -341,29 +311,6 @@ if sys.platform == "win32":
     # Localisation data path (which I omit, but you might not want to):
     # TODO: clarify what the above comment refers to
     GTK_LOCALE_DATA = op.join("share", "locale")
-
-
-def data_files():
-    """Build list of data files to be installed"""
-    data_files = []
-
-    for root, _, files in os.walk('data'):
-        if files:
-            files = [op.join(root, f) for f in files]
-            data_files.append((op.join('share',
-                                       'gourmet',
-                                       root[len('data')+1:]),
-                               files))
-
-    # files in /usr/share/X/ (not gourmet)
-    files = []
-    base = op.join('share', 'gourmet')
-
-    files.extend(data_files)
-    files.extend([(op.join(base, 'ui'), glob.glob(op.join('ui', '*.ui')))])
-    files.extend([(op.join('share', 'doc', 'gourmet'), ['FAQ', 'LICENSE'])])
-
-    return files
 
 
 if sys.platform == "win32":
@@ -477,31 +424,26 @@ if sys.platform == "win32":
                             }
                            }
                   )
-else:
-    from distutils.core import setup
-    build = build_extra
-    kwargs = dict(
-                  name=version.name,
-                  data_files=data_files(),
-                  scripts=[op.join('bin', 'gourmet')]
-                  )
+
 
 plugins = []
 
 
-def crawl(base, basename):
+def crawl_plugins(base, basename):
     bdir = base
     subdirs = filter(lambda x: op.isdir(op.join(bdir, x)),
                      os.listdir(bdir))
     for subd in subdirs:
         name = basename + '.' + subd
         plugins.append(name)
-        crawl(op.join(bdir, subd), name)
+        crawl_plugins(op.join(bdir, subd), name)
 
 
-crawl('gourmet/plugins', 'gourmet.plugins')
+crawl_plugins(op.join('gourmet', 'plugins'), 'gourmet.plugins')
 
-result = setup(
+
+setuptools.setup(
+    name=version.name,
     version=version.version,
     description=version.description,
     author=version.author,
@@ -519,13 +461,38 @@ result = setup(
               ] + plugins,
     package_data={'gourmet': ['plugins/*/*.ui',
                               'plugins/*/images/*.png',
-                              'plugins/*/*/images/*.png']
+                              'plugins/*/*/images/*.png',
+                              'ui/*.ui',
+                              'ui/catalog/*',
+                              'data/recipe.dtd',
+                              'data/WEIGHT.txt',
+                              'data/FOOD_DES.txt',
+                              'data/ABBREV.txt',
+                              'data/nutritional_data_sr_version',
+                              'data/images/no_star.png',
+                              'data/images/splash.png',
+                              'data/images/splash.svg',
+                              'data/images/reccard_edit.png',
+                              'data/images/AddToShoppingList.png',
+                              'data/images/half_gold_star.png',
+                              'data/images/gold_star.png',
+                              'data/images/reccard.png',
+                              'data/sound/phone.wav',
+                              'data/sound/warning.wav',
+                              'data/sound/error.wav',
+                              'data/icons/gourmet.ico',
+                              'data/icons/scalable/apps/gourmet.svg',
+                              'data/icons/48x48/apps/gourmet.png',
+                              'data/style/epubdefault.css',
+                              'data/style/default.css',
+                              ]
                   },
-    cmdclass={'build': build,
+    include_package_data=True,
+    cmdclass={'build': build_extra,
               'build_i18n': build_i18n,
-              'build_icons': build_icons,
               'build_py': build_py,
               'build_scripts': build_scripts,
               },
-    **kwargs
+
+    scripts=[op.join('bin', 'gourmet')],
 )
