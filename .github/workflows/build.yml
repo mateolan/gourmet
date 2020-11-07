@@ -8,6 +8,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -22,34 +23,32 @@ jobs:
         sudo apt-get update -q && sudo apt-get install
         --no-install-recommends -y xvfb python3-dev python3-gi
         python3-gi-cairo gir1.2-gtk-3.0 libgirepository1.0-dev libcairo2-dev
-        intltool enchant python3-enchant
+        intltool enchant python3-enchant gir1.2-poppler-0.18 python3-gst-1.0
 
     - name: Install dependencies
       run: |
-        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade pip setuptools
         pip3 install --upgrade keyrings.alt
-        if [ -f development.txt ]; then pip3 install -r development.txt; fi
-        if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
+
+    - name: Create Internationalization
+      run: |
+          python3 setup.py build_i18n
+          find . | grep gourmet-plugin
 
     - name: Install
       run: |
-        pip3 install .
+        pip3 install .[epub-export,mycookbook,pdf-export,spellcheck,web-import]
 
-    - name: Build source distribution
+    - name: Create wheel and source distributions
       run: |
-        python3 setup.py sdist
+          python3 setup.py sdist
+          mv dist/gourmet-*.tar.gz dist/gourmet-${GITHUB_SHA::8}.tar.gz
 
-    - name: Verify internationalization
-      run: |
-        python3 setup.py build_i18n
-
-    - name: Build wheel
-      run: |
           python3 setup.py bdist_wheel
           mv dist/gourmet-*-py3-none-any.whl dist/gourmet-${GITHUB_SHA::8}-py3-none-any.whl
 
-    - name: Upload wheel
+    - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-          name: gourmet.whl
-          path: ./dist/gourmet-*-py3-none-any.whl
+          name: gourmet
+          path: ./dist/gourmet-*
