@@ -9,6 +9,7 @@ import urllib.request
 from gettext import gettext as _
 
 import BeautifulSoup
+
 from gourmet.gdebug import debug
 
 from . import importer

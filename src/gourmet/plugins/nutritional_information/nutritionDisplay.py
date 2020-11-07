@@ -155,11 +155,12 @@ class SimpleIngredientCalculator (de.mDialog):
         return ret
 
 if __name__ == '__main__':
-    from gourmet.recipeManager import RecipeManager,dbargs
+    from gourmet.recipeManager import RecipeManager, dbargs
     dbargs['file']='/tmp/fdsa/recipes.mk'
     db=RecipeManager(**dbargs)
-    from gourmet.GourmetRecipeManager import UnitModel
     import gourmet.convert
+    from gourmet.GourmetRecipeManager import UnitModel
+
     #inginfo = gourmet.reccard.IngInfo(db)
     conv=gourmet.convert.converter()
     umod = UnitModel(conv)

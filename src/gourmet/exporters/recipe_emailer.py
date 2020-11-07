@@ -8,9 +8,10 @@ import webbrowser
 from gettext import gettext as _
 
 import exporter
-import gourmet.gtk_extras.dialog_extras as de
 import html_exporter
 import pdf_exporter
+
+import gourmet.gtk_extras.dialog_extras as de
 from gourmet import gglobals
 from gourmet.gdebug import debug
 

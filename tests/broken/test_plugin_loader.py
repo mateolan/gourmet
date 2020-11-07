@@ -20,7 +20,8 @@ class Test (unittest.TestCase):
         # Tests need to setup their own test workspace, otherwise 'gourmetdir' is set to '~/.gourmet' which could
         # result in the user gourmet database and other files being corrupted.
         # This attempt at isolation only really works if you're running this test module alone, not after others.
-        from gourmet.plugin_loader import get_master_loader  # noqa: E402 import not at top of file
+        from gourmet.plugin_loader import \
+            get_master_loader  # noqa: E402 import not at top of file
 
         cls.ml = get_master_loader()
 

@@ -459,7 +459,8 @@ class RecData (Pluggable):
     def backup_db (self):
         """Make a backup copy of the DB -- this ensures experimental
         code won't permanently screw our users."""
-        import time, os.path
+        import os.path
+        import time
         backup_file_name = self.filename + '.backup-' + time.strftime('%d-%m-%y')
         while os.path.exists(backup_file_name):
             backup_file_name += 'I'
@@ -516,6 +517,7 @@ class RecData (Pluggable):
                 print('Database older than 0.16.0 -- updating',sv_text)
                 self.backup_db()
                 from sqlalchemy.sql.expression import func
+
                 # We need to unpickle Booleans that have erroneously remained
                 # pickled during previous Metakit -> SQLite -> SQLAlchemy
                 # database migrations.

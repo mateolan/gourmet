@@ -44,8 +44,8 @@ class WindowsPDFPrinter:
 
     def set_document (self, filename, operation,context):
         try:
-            from subprocess import Popen
             import winreg
+            from subprocess import Popen
             regPathKey = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
                                          "Software\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe")
             regPathValue, regPathType = winreg.QueryValueEx(regPathKey, "")

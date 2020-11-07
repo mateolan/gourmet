@@ -11,7 +11,6 @@ from gourmet.prefs import Prefs
 
 from .state import WebsiteTestState
 
-
 global driver
 if 'driver' not in globals():
     driver = None
@@ -180,8 +179,9 @@ class CooksIllustratedPlugin (PluginPlugin):
         return CooksIllustratedParser
 
 if __name__ == '__main__':
-#if True:
-    import sys, os.path
+True:
+    import os.path
+    import sys
     sys.path = [os.path.abspath('../')]+sys.path
     import web_import_plugin.webpage_importer as webpage_importer
     cip = CooksIllustratedPlugin()

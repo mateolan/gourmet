@@ -102,7 +102,9 @@ class TestSetterUpper (unittest.TestCase):
     # FIXME: What is this meant to test? It just opens the GUI and hangs.
     @unittest.skip("GUI hangs tests")
     def testSetup (self):
-        from gourmet.GourmetRecipeManager import get_application, GourmetApplication
+        from gourmet.GourmetRecipeManager import (GourmetApplication,
+                                                  get_application)
+
         #GourmetApplication.__single = None
         app = get_application(); app.window.show()
         from gi.repository import Gtk
