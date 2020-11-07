@@ -13,6 +13,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: echo
+      run:
+        echo ${GITHUB_SHA::8} >> out.txt
+
+    - name: Upload Flatpak
+      uses: actions/upload-artifact@v2
+      with:
+        name: gourmet-${{ env.GITHUB_SHA }}.txt
+        path: ./out.txt
+
     - name: Install Flatpak
       run: |
         sudo apt install flatpak flatpak-builder
